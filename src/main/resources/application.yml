@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:dbspringtransaction
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+    hikari:
+      auto-commit: false
+  h2:
+    console:
+      enabled: true
+#      settings:
+#        web-allow-others: true
+#        trace: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
