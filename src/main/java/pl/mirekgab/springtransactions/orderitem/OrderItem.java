@@ -1,65 +1,36 @@
 package pl.mirekgab.springtransactions.orderitem;
 
-import pl.mirekgab.springtransactions.clientorder.ClientOrder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import pl.mirekgab.springtransactions.order.Order;
 import pl.mirekgab.springtransactions.product.Product;
+import pl.mirekgab.springtransactions.stock.Stock;
 
 import javax.persistence.*;
 import java.math.BigInteger;
 
 @Entity
 @Table(name = "order_items")
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @ManyToOne
-    private ClientOrder clientOrder;
+    private Order order;
 
     @ManyToOne
     private Product product;
+    @ManyToOne
+    private Stock stock;
 
     private Integer quantity;
     private BigInteger net;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public ClientOrder getClientOrder() {
-        return clientOrder;
-    }
-
-    public void setClientOrder(ClientOrder clientOrder) {
-        this.clientOrder = clientOrder;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public BigInteger getNet() {
-        return net;
-    }
-
-    public void setNet(BigInteger net) {
-        this.net = net;
-    }
 }

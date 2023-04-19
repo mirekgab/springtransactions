@@ -1,17 +1,25 @@
 package pl.mirekgab.springtransactions.invoiceitem;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import pl.mirekgab.springtransactions.invoice.Invoice;
 import pl.mirekgab.springtransactions.product.Product;
+import pl.mirekgab.springtransactions.stock.Stock;
 
 import javax.persistence.*;
 import java.math.BigInteger;
 
 @Entity
-@Table(name = "invoice_item")
+@Table(name = "invoice_items")
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class InvoiceItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @ManyToOne
@@ -19,47 +27,10 @@ public class InvoiceItem {
 
     @ManyToOne
     private Product product;
+    @ManyToOne
+    private Stock stock;
 
     private Integer quantity;
     private BigInteger net;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Invoice getInvoice() {
-        return invoice;
-    }
-
-    public void setInvoice(Invoice invoice) {
-        this.invoice = invoice;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public BigInteger getNet() {
-        return net;
-    }
-
-    public void setNet(BigInteger net) {
-        this.net = net;
-    }
 }

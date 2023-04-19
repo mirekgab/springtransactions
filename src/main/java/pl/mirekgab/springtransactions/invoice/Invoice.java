@@ -1,35 +1,27 @@
 package pl.mirekgab.springtransactions.invoice;
 
 
-import pl.mirekgab.springtransactions.clientorder.ClientOrder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import pl.mirekgab.springtransactions.order.Order;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "invoices")
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Invoice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @OneToOne
     @JoinColumn(name="client_order_id", referencedColumnName = "id")
-    private ClientOrder clientOrder;
+    private Order order;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public ClientOrder getClientOrder() {
-        return clientOrder;
-    }
-
-    public void setClientOrder(ClientOrder clientOrder) {
-        this.clientOrder = clientOrder;
-    }
 }

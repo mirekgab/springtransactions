@@ -1,4 +1,4 @@
-package pl.mirekgab.springtransactions.clientorder;
+package pl.mirekgab.springtransactions.order;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,21 +10,26 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/clientorder")
-public class ClientOrderController {
-    private final ClientOrderService clientOrderService;
+public class OrderController {
+    private final OrderService orderService;
 
     @Autowired
-    public ClientOrderController(ClientOrderService clientOrderService) {
-        this.clientOrderService = clientOrderService;
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
     }
 
     @GetMapping
-    public List<ClientOrder> getAllOrders() {
-        return clientOrderService.findAll();
+    public List<OrderDTO> getAllOrders() {
+        return orderService.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public OrderDTO getById(@PathVariable Long id) {
+        return orderService.findOrderById(id);
     }
 
     @GetMapping("/{id}/completed")
     public String completeOrder(@PathVariable Long id) {
-        return String.valueOf(clientOrderService.completeOrder(id));
+        return String.valueOf(orderService.completeOrder(id));
     }
 }
