@@ -1,6 +1,5 @@
 package pl.mirekgab.springtransactions.invoiceitem;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import pl.mirekgab.springtransactions.invoice.Invoice;
@@ -14,12 +13,10 @@ import java.math.BigInteger;
 @Table(name = "invoice_items")
 @Getter
 @Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class InvoiceItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    @EqualsAndHashCode.Include
     private Long id;
 
     @ManyToOne

@@ -1,6 +1,5 @@
 package pl.mirekgab.springtransactions.orderitem;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import pl.mirekgab.springtransactions.order.Order;
@@ -14,12 +13,10 @@ import java.math.BigInteger;
 @Table(name = "order_items")
 @Getter
 @Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    @EqualsAndHashCode.Include
     private Long id;
 
     @ManyToOne

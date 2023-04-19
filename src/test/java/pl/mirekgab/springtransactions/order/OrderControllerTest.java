@@ -27,13 +27,14 @@ class OrderControllerTest {
 
     @Test
     void completeTheOrder() throws Exception {
+
         ResultActions perform = mockMvc.perform(
                         MockMvcRequestBuilders.get("/clientorder/1/completed")
                                 .contentType(MediaType.TEXT_PLAIN))
                 .andExpect(status().isOk());
 
         System.out.println(perform.andReturn().getResponse().getContentAsString());
-
         System.out.println("end test");
+
     }
 }
