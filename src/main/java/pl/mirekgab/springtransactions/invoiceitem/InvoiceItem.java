@@ -7,7 +7,7 @@ import pl.mirekgab.springtransactions.product.Product;
 import pl.mirekgab.springtransactions.stock.Stock;
 
 import javax.persistence.*;
-import java.math.BigInteger;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "invoice_items")
@@ -28,6 +28,6 @@ public class InvoiceItem {
     private Stock stock;
 
     private Integer quantity;
-    private BigInteger net;
+    private BigDecimal net;
 
 }

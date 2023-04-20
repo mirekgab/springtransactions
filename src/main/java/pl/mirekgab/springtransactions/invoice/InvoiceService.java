@@ -9,6 +9,6 @@ public class InvoiceService {
     private final InvoiceRepository invoiceRepository;
 
     public Invoice save(Invoice invoice) {
-        return invoiceRepository.save(invoice);
+        return invoiceRepository.saveAndFlush(invoice);
     }
 }

@@ -7,13 +7,14 @@ import pl.mirekgab.springtransactions.product.Product;
 import pl.mirekgab.springtransactions.stock.Stock;
 
 import javax.persistence.*;
-import java.math.BigInteger;
+import java.math.BigDecimal;
+import java.util.Objects;
 
 @Entity
 @Table(name = "order_items")
 @Getter
 @Setter
-public class OrderItem {
+public class OrderItem implements Comparable<OrderItem> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -28,6 +29,23 @@ public class OrderItem {
     private Stock stock;
 
     private Integer quantity;
-    private BigInteger net;
+    private BigDecimal net;
 
+    @Override
+    public int compareTo(OrderItem o) {
+        return this.id.compareTo(o.getId());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OrderItem orderItem = (OrderItem) o;
+        return id.equals(orderItem.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

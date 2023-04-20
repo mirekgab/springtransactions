@@ -26,7 +26,7 @@ public class StockQuantityService {
                                 .multiply(BigDecimal.valueOf(quantity))
                 )
         );
-        stockQuantityRepository.save(stockQuantity);
+        stockQuantityRepository.saveAndFlush(stockQuantity);
     }
 
     public int availableQuantity(Long stockId, Long productId) {

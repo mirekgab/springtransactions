@@ -13,6 +13,6 @@ public class InvoiceItemService {
     }
 
     public InvoiceItem save(InvoiceItem invoiceItem) {
-        return invoiceItemRepository.save(invoiceItem);
+        return invoiceItemRepository.saveAndFlush(invoiceItem);
     }
 }

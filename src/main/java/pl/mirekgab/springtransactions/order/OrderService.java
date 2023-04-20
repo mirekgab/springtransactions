@@ -3,6 +3,7 @@ package pl.mirekgab.springtransactions.order;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
+import pl.mirekgab.springtransactions.errorhandler.AppRuntimeException;
 import pl.mirekgab.springtransactions.invoice.Invoice;
 import pl.mirekgab.springtransactions.invoice.InvoiceService;
 import pl.mirekgab.springtransactions.invoiceitem.InvoiceItem;
@@ -50,7 +51,7 @@ public class OrderService {
 
         Invoice savedInvoice = invoiceService.save(invoice);
 
-        for (OrderItem item : order.getOrderItemSet()) {
+        for (OrderItem item : order.getOrderItemSet().stream().sorted().toList()) {
             createInvoiceItem(savedInvoice, item);
         }
         log.info("finished create invoice");
@@ -66,7 +67,7 @@ public class OrderService {
                 invoiceItem.getStock().getId(),
                 invoiceItem.getProduct().getId());
         if (availableQuantity < item.getQuantity()) {
-            throw new RuntimeException(String.format("quantity in stock %d is less than required %d", availableQuantity, item.getQuantity()));
+            throw new AppRuntimeException(String.format("quantity in stock %d is less than required %d", availableQuantity, item.getQuantity()));
         }
         //check quantity in stock
         invoiceItem.setQuantity(item.getQuantity());
