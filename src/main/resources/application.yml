@@ -26,8 +26,11 @@ spring:
 #  level:
 #    org:
 #      hibernate:
+#        transaction: DEBUG
 #        SQL: DEBUG
 #        type:
 #          descriptor:
 #            sql:
 #              BasicBinder: TRACE
+#      springframework:
+#        transaction: DEBUG

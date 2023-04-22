@@ -3,7 +3,10 @@ package pl.mirekgab.springtransactions.order;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
-import pl.mirekgab.springtransactions.errorhandler.AppRuntimeException;
+import org.springframework.transaction.TransactionManager;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import pl.mirekgab.springtransactions.invoice.Invoice;
 import pl.mirekgab.springtransactions.invoice.InvoiceService;
 import pl.mirekgab.springtransactions.invoiceitem.InvoiceItem;
@@ -23,6 +26,7 @@ public class OrderService {
     private final StockQuantityService stockQuantityService;
     private final OrderToOrderDTOMapper mapper;
 
+    //@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_UNCOMMITTED)
     public int completeOrder(long orderId) {
         log.info("start complete the order");
         createInvoice(orderId);
@@ -45,37 +49,16 @@ public class OrderService {
     private void createInvoice(long orderId) {
         log.info("start cerate invoice");
         Order order = findById(orderId);
-
-        Invoice invoice = new Invoice();
-        invoice.setOrder(order);
-
-        Invoice savedInvoice = invoiceService.save(invoice);
-
-        for (OrderItem item : order.getOrderItemSet().stream().sorted().toList()) {
-            createInvoiceItem(savedInvoice, item);
-        }
+        Invoice savedInvoice = invoiceService.createInvoice(order);
+        createInvoiceItem(savedInvoice, order);
         log.info("finished create invoice");
     }
 
-    private void createInvoiceItem(Invoice invoice, OrderItem item) {
-        InvoiceItem invoiceItem = new InvoiceItem();
-        invoiceItem.setInvoice(invoice);
-        invoiceItem.setProduct(item.getProduct());
-        invoiceItem.setStock(item.getStock());
-
-        int availableQuantity = stockQuantityService.availableQuantity(
-                invoiceItem.getStock().getId(),
-                invoiceItem.getProduct().getId());
-        if (availableQuantity < item.getQuantity()) {
-            throw new AppRuntimeException(String.format("quantity in stock %d is less than required %d", availableQuantity, item.getQuantity()));
+    private void createInvoiceItem(Invoice invoice, Order order) {
+        for (OrderItem item : order.getOrderItemSet().stream().sorted().toList()) {
+            InvoiceItem savedInvoiceItem = invoiceItemService.createInvoiceItemFromOrderItem(invoice, item);
+            stockQuantityService.decreaseQuanity(savedInvoiceItem.getProduct().getId(), savedInvoiceItem.getStock().getId(), savedInvoiceItem.getQuantity());
         }
-        //check quantity in stock
-        invoiceItem.setQuantity(item.getQuantity());
-        invoiceItem.setNet(item.getNet());
-
-        InvoiceItem savedInvoiceItem = invoiceItemService.save(invoiceItem);
-
-        stockQuantityService.decreaseQuanity(savedInvoiceItem.getProduct().getId(), savedInvoiceItem.getStock().getId(), savedInvoiceItem.getQuantity());
     }
 
     public Order findById(Long orderId) {

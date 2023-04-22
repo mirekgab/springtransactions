@@ -9,9 +9,11 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import pl.mirekgab.springtransactions.invoice.InvoiceRepository;
 import pl.mirekgab.springtransactions.invoiceitem.InvoiceItemRepository;
 import pl.mirekgab.springtransactions.orderitem.OrderItemRepository;
 import pl.mirekgab.springtransactions.stock.StockRepository;
+import pl.mirekgab.springtransactions.stockquantity.StockQuantityRepository;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,6 +36,10 @@ class OrderControllerTest {
     private StockRepository stockRepository;
     @Autowired
     private InvoiceItemRepository invoiceItemRepository;
+    @Autowired
+    private InvoiceRepository invoiceRepository;
+    @Autowired
+    private StockQuantityRepository stockQuantityRepository;
 
 //    @BeforeAll
 //    public static void beforeAll(@Autowired DataSource dataSource,
@@ -51,15 +57,34 @@ class OrderControllerTest {
 
     @Test
     void completeTheOrder() throws Exception {
-
+        //given
+        int orderId=1;
+        int stockQuantityProductId1 = stockQuantityRepository.findByStockIdAndProductId(1L, 1L).get().getQuantity();
+        int stockQuantityProductId2 = stockQuantityRepository.findByStockIdAndProductId(1L, 2L).get().getQuantity();
+        int stockQuantityProductId3 = stockQuantityRepository.findByStockIdAndProductId(1L, 3L).get().getQuantity();
+        long orderItemNumber = orderItemRepository.count();
+        long invoiceItemNumber = invoiceItemRepository.count();
+        long invoiceNumber = invoiceRepository.count();
+        //when
         ResultActions perform = mockMvc.perform(
-                        MockMvcRequestBuilders.get("/clientorder/1/completed")
+                        MockMvcRequestBuilders.get("/clientorder/"+orderId+"/completed")
                                 .contentType(MediaType.TEXT_PLAIN))
                 .andExpect(status().isUnprocessableEntity());
 
+        //then
         assertAll(
-                () -> assertEquals(3L, orderItemRepository.count(), "order items count"),
-                () -> assertEquals(0L, invoiceItemRepository.count(), "invoice items count")
+                () -> assertEquals(orderItemNumber, orderItemRepository.count(), "order items count"),
+                () -> assertEquals(invoiceItemNumber, invoiceItemRepository.count(), "invoice items count"),
+                () -> assertEquals(invoiceNumber, invoiceRepository.count(), "invoice count"),
+                () -> assertEquals(stockQuantityProductId1,
+                        stockQuantityRepository.findByStockIdAndProductId(1L, 1L).get().getQuantity(),
+                        "stock quantity for product 1"),
+                () -> assertEquals(stockQuantityProductId2,
+                        stockQuantityRepository.findByStockIdAndProductId(1L, 2L).get().getQuantity(),
+                        "stock quantity for product 2"),
+                () -> assertEquals(stockQuantityProductId3,
+                        stockQuantityRepository.findByStockIdAndProductId(1L, 3L).get().getQuantity(),
+                        "stock quantity for product 3")
         );
         System.out.println("hello");
     }
