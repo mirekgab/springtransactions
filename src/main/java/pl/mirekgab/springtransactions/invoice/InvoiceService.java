@@ -5,9 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import pl.mirekgab.springtransactions.errorhandler.AppRuntimeException;
 import pl.mirekgab.springtransactions.order.Order;
-import pl.mirekgab.springtransactions.order.OrderRepository;
 
 @Service
 @AllArgsConstructor
@@ -19,7 +17,7 @@ public class InvoiceService {
         return invoiceRepository.saveAndFlush(invoice);
     }
 
-    //@Transactional(propagation = Propagation.MANDATORY, isolation = Isolation.READ_UNCOMMITTED)
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_UNCOMMITTED)
     public Invoice createInvoice(Order order) {
         Invoice invoice = new Invoice();
         invoice.setOrder(order);

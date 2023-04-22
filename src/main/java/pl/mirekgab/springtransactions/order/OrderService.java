@@ -3,7 +3,6 @@ package pl.mirekgab.springtransactions.order;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,14 +25,10 @@ public class OrderService {
     private final StockQuantityService stockQuantityService;
     private final OrderToOrderDTOMapper mapper;
 
-    //@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_UNCOMMITTED)
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_UNCOMMITTED)
     public int completeOrder(long orderId) {
         log.info("start complete the order");
-        createInvoice(orderId);
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException(String.format("order with id=%d not exists", orderId)));
-        order.setStatus(OrderStatus.COMPLETED);
-
-        //change order status to complete
+        createInvoiceAndChangeStockQuantity(orderId);
         changeStatus(orderId, OrderStatus.COMPLETED);
         log.info("order completed");
         return 1;
@@ -46,15 +41,15 @@ public class OrderService {
         orderRepository.save(order);
     }
 
-    private void createInvoice(long orderId) {
+    private void createInvoiceAndChangeStockQuantity(long orderId) {
         log.info("start cerate invoice");
         Order order = findById(orderId);
         Invoice savedInvoice = invoiceService.createInvoice(order);
-        createInvoiceItem(savedInvoice, order);
+        createInvoiceItemAndChangeStockQuantity(savedInvoice, order);
         log.info("finished create invoice");
     }
 
-    private void createInvoiceItem(Invoice invoice, Order order) {
+    private void createInvoiceItemAndChangeStockQuantity(Invoice invoice, Order order) {
         for (OrderItem item : order.getOrderItemSet().stream().sorted().toList()) {
             InvoiceItem savedInvoiceItem = invoiceItemService.createInvoiceItemFromOrderItem(invoice, item);
             stockQuantityService.decreaseQuanity(savedInvoiceItem.getProduct().getId(), savedInvoiceItem.getStock().getId(), savedInvoiceItem.getQuantity());

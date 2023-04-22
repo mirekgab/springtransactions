@@ -1,7 +1,6 @@
 package pl.mirekgab.springtransactions.invoiceitem;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -21,7 +20,7 @@ public class InvoiceItemService {
         return invoiceItemRepository.saveAndFlush(invoiceItem);
     }
 
-    //@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_UNCOMMITTED)
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_UNCOMMITTED)
     public InvoiceItem createInvoiceItemFromOrderItem(Invoice invoice, OrderItem item) {
         InvoiceItem invoiceItem = new InvoiceItem();
         invoiceItem.setInvoice(invoice);

@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Sql(scripts = "classpath:clean-tables.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(scripts = "classpath:data1.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-class OrderControllerTest {
+class OrderControllerIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -58,7 +58,8 @@ class OrderControllerTest {
     @Test
     void completeTheOrder() throws Exception {
         //given
-        int orderId=1;
+        long orderId=1;
+        OrderStatus orderStatus = orderRepository.findById(orderId).get().getStatus();
         int stockQuantityProductId1 = stockQuantityRepository.findByStockIdAndProductId(1L, 1L).get().getQuantity();
         int stockQuantityProductId2 = stockQuantityRepository.findByStockIdAndProductId(1L, 2L).get().getQuantity();
         int stockQuantityProductId3 = stockQuantityRepository.findByStockIdAndProductId(1L, 3L).get().getQuantity();
@@ -74,6 +75,7 @@ class OrderControllerTest {
         //then
         assertAll(
                 () -> assertEquals(orderItemNumber, orderItemRepository.count(), "order items count"),
+                () -> assertEquals(orderStatus, orderRepository.findById(orderId).get().getStatus(), "order status"),
                 () -> assertEquals(invoiceItemNumber, invoiceItemRepository.count(), "invoice items count"),
                 () -> assertEquals(invoiceNumber, invoiceRepository.count(), "invoice count"),
                 () -> assertEquals(stockQuantityProductId1,
