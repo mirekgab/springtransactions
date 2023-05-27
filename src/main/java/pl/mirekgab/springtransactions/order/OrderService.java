@@ -3,7 +3,6 @@ package pl.mirekgab.springtransactions.order;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.mirekgab.springtransactions.invoice.Invoice;
@@ -25,7 +24,7 @@ public class OrderService {
     private final StockQuantityService stockQuantityService;
     private final OrderToOrderDTOMapper mapper;
 
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_UNCOMMITTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public int completeOrder(long orderId) {
         log.info("start complete the order");
         createInvoiceAndChangeStockQuantity(orderId);

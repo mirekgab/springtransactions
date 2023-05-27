@@ -4,9 +4,10 @@ import org.mapstruct.Mapper;
 
 import java.util.List;
 
-@Mapper(componentModel="spring")
+@Mapper(componentModel = "spring")
 public interface OrderToOrderDTOMapper {
 
     List<OrderDTO> mapEntityListToDTOList(List<Order> ordersList);
+
     OrderDTO mapEntityToDTO(Order order);
 }
