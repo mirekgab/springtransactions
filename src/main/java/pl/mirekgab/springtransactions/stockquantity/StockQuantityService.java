@@ -15,8 +15,8 @@ public class StockQuantityService {
 
     public void decreaseQuanity(Long productId, Long stockId, Integer quantity) {
         StockQuantity stockQuantity = stockQuantityRepository.findByStockIdAndProductId(stockId, productId)
-                .orElseThrow(()->new RuntimeException(String.format("productId=%d not exists in stockId=%d ", productId, stockId)));
-        stockQuantity.setQuantity(stockQuantity.getQuantity()-quantity);
+                .orElseThrow(() -> new RuntimeException(String.format("productId=%d not exists in stockId=%d ", productId, stockId)));
+        stockQuantity.setQuantity(stockQuantity.getQuantity() - quantity);
         Product product = productRepository.findById(stockQuantity.getProduct().getId()).orElseThrow(
                 () -> new RuntimeException(String.format("product with id=%d not exists", stockQuantity.getProduct().getId()))
         );
@@ -31,7 +31,7 @@ public class StockQuantityService {
 
     public int availableQuantity(Long stockId, Long productId) {
         StockQuantity quantityInStock = stockQuantityRepository.findByStockIdAndProductId(stockId, productId)
-                .orElseThrow(()->new RuntimeException(String.format("productId=%d not exists in stockId=%d ", productId, stockId)));
+                .orElseThrow(() -> new RuntimeException(String.format("productId=%d not exists in stockId=%d ", productId, stockId)));
         return quantityInStock.getQuantity();
     }
 }

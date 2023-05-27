@@ -2,7 +2,6 @@ package pl.mirekgab.springtransactions.invoiceitem;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.mirekgab.springtransactions.errorhandler.AppRuntimeException;
@@ -20,7 +19,7 @@ public class InvoiceItemService {
         return invoiceItemRepository.saveAndFlush(invoiceItem);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_UNCOMMITTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public InvoiceItem createInvoiceItemFromOrderItem(Invoice invoice, OrderItem item) {
         InvoiceItem invoiceItem = new InvoiceItem();
         invoiceItem.setInvoice(invoice);
@@ -33,7 +32,7 @@ public class InvoiceItemService {
         if (availableQuantity < item.getQuantity()) {
             throw new AppRuntimeException(String.format("quantity in stock %d is less than required %d", availableQuantity, item.getQuantity()));
         }
-        //check quantity in stock
+        //check quantity in the stock
         invoiceItem.setQuantity(item.getQuantity());
         invoiceItem.setNet(item.getNet());
         return save(invoiceItem);
